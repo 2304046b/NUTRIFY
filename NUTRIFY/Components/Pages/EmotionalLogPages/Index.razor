@@ -1,0 +1,44 @@
+﻿@page "/emotionallogs"
+@using Microsoft.EntityFrameworkCore
+@using Microsoft.AspNetCore.Components.QuickGrid
+@using NUTRIFY.Components.Domain
+@using NUTRIFY.Data
+@implements IAsyncDisposable
+@inject IDbContextFactory<NUTRIFY.Data.NUTRIFYContext> DbFactory
+
+<PageTitle>Index</PageTitle>
+
+<h1>Index</h1>
+
+<p>
+    <a href="emotionallogs/create">Create New</a>
+</p>
+
+<QuickGrid Class="table" Items="context.EmotionalLog">
+    <PropertyColumn Property="emotionallog => emotionallog.Date" />
+    <PropertyColumn Property="emotionallog => emotionallog.Emotion" />
+    <PropertyColumn Property="emotionallog => emotionallog.Notes" />
+    <PropertyColumn Property="emotionallog => emotionallog.Context" />
+    <PropertyColumn Property="emotionallog => emotionallog.Intensity" />
+    <PropertyColumn Property="emotionallog => emotionallog.DateCreated" />
+    <PropertyColumn Property="emotionallog => emotionallog.DateUpdated" />
+    <PropertyColumn Property="emotionallog => emotionallog.CreatedBy" />
+    <PropertyColumn Property="emotionallog => emotionallog.UpdatedBy" />
+
+    <TemplateColumn Context="emotionallog">
+        <a href="@($"emotionallogs/edit?emotionallogid={emotionallog.EmotionalLogID}")">Edit</a> |
+        <a href="@($"emotionallogs/details?emotionallogid={emotionallog.EmotionalLogID}")">Details</a> |
+        <a href="@($"emotionallogs/delete?emotionallogid={emotionallog.EmotionalLogID}")">Delete</a>
+    </TemplateColumn>
+</QuickGrid>
+
+@code {
+    private NUTRIFYContext context = default!;
+
+    protected override void OnInitialized()
+    {
+        context = DbFactory.CreateDbContext();
+    }
+
+    public async ValueTask DisposeAsync() => await context.DisposeAsync();
+}

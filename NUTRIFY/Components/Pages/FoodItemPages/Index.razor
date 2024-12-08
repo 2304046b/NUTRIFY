@@ -1,0 +1,43 @@
+﻿@page "/fooditems"
+@using Microsoft.EntityFrameworkCore
+@using Microsoft.AspNetCore.Components.QuickGrid
+@using NUTRIFY.Components.Domain
+@using NUTRIFY.Data
+@implements IAsyncDisposable
+@inject IDbContextFactory<NUTRIFY.Data.NUTRIFYContext> DbFactory
+
+<PageTitle>Index</PageTitle>
+
+<h1>Index</h1>
+
+<p>
+    <a href="fooditems/create">Create New</a>
+</p>
+
+<QuickGrid Class="table" Items="context.FoodItem">
+    <PropertyColumn Property="fooditem => fooditem.Name" />
+    <PropertyColumn Property="fooditem => fooditem.Description" />
+    <PropertyColumn Property="fooditem => fooditem.Brand" />
+    <PropertyColumn Property="fooditem => fooditem.Colour" />
+    <PropertyColumn Property="fooditem => fooditem.DateCreated" />
+    <PropertyColumn Property="fooditem => fooditem.DateUpdated" />
+    <PropertyColumn Property="fooditem => fooditem.CreatedBy" />
+    <PropertyColumn Property="fooditem => fooditem.UpdatedBy" />
+
+    <TemplateColumn Context="fooditem">
+        <a href="@($"fooditems/edit?id={fooditem.Id}")">Edit</a> |
+        <a href="@($"fooditems/details?id={fooditem.Id}")">Details</a> |
+        <a href="@($"fooditems/delete?id={fooditem.Id}")">Delete</a>
+    </TemplateColumn>
+</QuickGrid>
+
+@code {
+    private NUTRIFYContext context = default!;
+
+    protected override void OnInitialized()
+    {
+        context = DbFactory.CreateDbContext();
+    }
+
+    public async ValueTask DisposeAsync() => await context.DisposeAsync();
+}
